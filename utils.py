@@ -82,12 +82,12 @@ def clip_classifier(classnames, template, clip_model, json_file_path=None):
             
             # First pass: collect description lengths to find minimum
                 for classname in classnames:
-                # Replace underscores with spaces for better text processing
-                classname_clean = classname.replace('_', ' ')
-                
-                # Get detailed description for this class
-                class_description = class_descriptions[classname_clean]
-                description_lengths.append(len(class_description))
+                    # Replace underscores with spaces for better text processing
+                    classname_clean = classname.replace('_', ' ')
+                    
+                    # Get detailed description for this class
+                    class_description = class_descriptions[classname_clean]
+                    description_lengths.append(len(class_description))
             
             # Find minimum description length for consistent processing
             min_length = min(description_lengths)
