@@ -74,13 +74,13 @@ ETTA supports two prompt strategies that can be configured:
 - Loads prompts from JSON files (e.g., `CuPL_prompts_imagenet.json`)
 - Combines detailed descriptions with template prompts
 - Generally provides better performance through richer class representations
-- Enable with: `--use-csp True`
+- Enable with: `csp: True` in the corresponding config file.
 
 #### General Prompts (GP) - ETTA
 - Uses only template-based prompts (e.g., "a photo of a {classname}")
 - Simpler approach with fewer computational requirements
 - Good baseline performance
-- Enable with: `--use-csp False`
+- Enable with: `csp: False` in the corresponding config file.
 
 ### Hyperparameters
 
