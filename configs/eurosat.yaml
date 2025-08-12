@@ -1,0 +1,25 @@
+
+VIT:
+  ETTA_PLUS:
+    csp : True
+    alpha : 0.2
+    augmen : False
+  ETTA:
+    csp : False
+    alpha : 0.2
+    augmen : False
+
+
+
+RESNET:
+  ETTA_PLUS:
+    csp : True
+    alpha : 0.2
+    augmen : False
+  ETTA:
+    csp : False
+    alpha : 0.2
+    augmen : False
+
+
+
