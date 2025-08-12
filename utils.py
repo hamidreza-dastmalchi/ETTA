@@ -81,7 +81,7 @@ def clip_classifier(classnames, template, clip_model, json_file_path=None):
                 class_descriptions = json.load(f)
             
             # First pass: collect description lengths to find minimum
-            for classname in classnames:
+                for classname in classnames:
                 # Replace underscores with spaces for better text processing
                 classname_clean = classname.replace('_', ' ')
                 
@@ -165,14 +165,14 @@ def clip_classifier(classnames, template, clip_model, json_file_path=None):
                 
                 # Add batch dimension and store
                 clip_weights.append(class_embeddings.unsqueeze(0))
-                
+
         # =============================================================================
         # FINAL PROCESSING AND OUTPUT
         # =============================================================================
         # Concatenate all class embeddings into a single tensor
         # Shape: (num_classes, num_prompts, feature_dim)
         clip_weights = torch.cat(clip_weights, dim=0).cuda()
-        
+
         print(f"Final CLIP weights shape: {clip_weights.shape}")
         print(f"Number of classes: {clip_weights.shape[0]}")
         print(f"Prompts per class: {clip_weights.shape[1]}")
@@ -217,7 +217,7 @@ def get_clip_logits(images, clip_model, clip_weights, alpha):
             images = torch.cat(images, dim=0).cuda()
         else:
             images = images.cuda()
-        
+
         # Extract features from all images using CLIP
         images_all_features = clip_model.encode_image(images)
         
@@ -243,17 +243,17 @@ def get_clip_logits(images, clip_model, clip_weights, alpha):
         top_indices = sorted_indices[:, :num_top_prompts]
         
         # Extract top weights for each class based on similarity scores
-        top_clip_weights = []
-        for i in range(clip_weights.size(0)):
+            top_clip_weights = []
+            for i in range(clip_weights.size(0)):
             # Get the top prompts for class i
-            top_clip_weight = clip_weights[i, top_indices[i,:], :].unsqueeze(0)
-            top_clip_weights.append(top_clip_weight)
-        
+                top_clip_weight = clip_weights[i, top_indices[i,:], :].unsqueeze(0)
+                top_clip_weights.append(top_clip_weight)
+
         # Combine filtered weights from all classes
         top_clip_weights = torch.cat(top_clip_weights, dim=0)
-        
+
         # Average the filtered weights and normalize
-        top_clip_weights = top_clip_weights.mean(dim=1)
+            top_clip_weights = top_clip_weights.mean(dim=1)
         top_clip_weights = top_clip_weights / top_clip_weights.norm(dim=1, keepdim=True)
         
         # Compute final logits using filtered weights
@@ -282,7 +282,7 @@ def get_clip_logits(images, clip_model, clip_weights, alpha):
             # Average selected features and predictions for final output
             image_features = images_all_features[selected_idx].mean(0).unsqueeze(0)
             clip_logits = output.mean(0).unsqueeze(0)
-            
+
             # Compute additional metrics for analysis
             loss = avg_entropy(100 * output)
             prob_map = output.softmax(1).mean(0).unsqueeze(0)

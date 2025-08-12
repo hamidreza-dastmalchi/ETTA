@@ -2,6 +2,9 @@
 
 Official implementation of **ETTA: Efficient Test-Time Adaptation for Vision-Language Models via Dynamic Embedding Updates**.
 
+[![Paper](https://img.shields.io/badge/Paper-arXiv%3A2508.05898-B31B1B.svg)](https://arxiv.org/pdf/2508.05898)
+
+## Block Diagram
 ## About
 
 ETTA is a novel test-time adaptation approach that improves CLIP model performance through two key innovations:
@@ -10,6 +13,11 @@ ETTA is a novel test-time adaptation approach that improves CLIP model performan
 2. **Recursive Update Mechanism**: Dynamically updates class embeddings based on incoming test-time samples
 
 The method adapts to test data without requiring retraining, making it efficient and practical for real-world deployment.
+
+
+
+![Block Diagram](assets/diagram_gif.gif)
+
 
 ## Key Features
 
@@ -21,52 +29,6 @@ The method adapts to test data without requiring retraining, making it efficient
 - **Multi-dataset Processing**: Handles various datasets including ImageNet variants
 - **Class-Specific Prompts (CSP) vs General Prompts (GP)**: Flexible prompt selection strategies
 
-## Technical Architecture
-
-### Adaptive Ensembling Module
-
-The core innovation of ETTA lies in its adaptive prompt filtering mechanism:
-
-```python
-# Sort logits in descending order (highest similarity first)
-sorted_logits, sorted_indices = torch.sort(clip_logits, dim=-1, descending=True)
-
-# Select top alpha% of prompts (e.g., alpha=0.2 means top 20%)
-num_top_prompts = int(sorted_logits.size(-1) * alpha)
-top_indices = sorted_indices[:, :num_top_prompts]
-
-# Extract and combine top weights for each class
-top_clip_weights = clip_weights[:, top_indices, :]
-```
-
-This module automatically identifies and uses only the most relevant prompts for each specific test image, creating a focused ensemble that adapts to the input.
-
-### Recursive Update Mechanism
-
-ETTA implements a sophisticated cache update system that recursively refines class embeddings:
-
-```python
-def update_cache(cache, pred, image_features, contextless_weight):
-    # Get current cache state for the predicted class
-    current_sum = cache[pred]["sum"]
-    current_weight = cache[pred]["weight"]
-    
-    # Calculate exponential term for weight update
-    exp_term = torch.exp(contextless_weight @ image_features.T)
-    
-    # Update sum and weight using exponential moving average
-    new_sum = current_sum + exp_term
-    new_weight = (current_weight * current_sum + exp_term * image_features) / new_sum
-    
-    # Store updated values back to cache
-    cache[pred]["sum"] = new_sum
-    cache[pred]["weight"] = new_weight
-```
-
-This mechanism ensures that:
-- Class representations become progressively more accurate during testing
-- Knowledge accumulates adaptively based on test data distribution
-- The model learns domain-specific patterns without forgetting pre-trained knowledge
 
 ## Requirements
 
@@ -95,7 +57,9 @@ pip install -r requirements.txt
 
 ## Dataset Setup
 
-To set up all required datasets, kindly refer to the guidance in `DATASETS.md`, which incorporates steps for two benchmarks.
+To set up all required datasets, please refer to the [DATASETS.md](./Doc/DATASETS.md) file.  
+It includes step-by-step instructions for preparing datasets for both benchmarks used in this project.
+
 
 ## Configuration
 
@@ -110,21 +74,20 @@ ETTA supports two prompt strategies that can be configured:
 - Loads prompts from JSON files (e.g., `CuPL_prompts_imagenet.json`)
 - Combines detailed descriptions with template prompts
 - Generally provides better performance through richer class representations
-- Enable with: `--use-csp True`
+- Enable with: `csp: True` in the corresponding config file.
 
 #### General Prompts (GP) - ETTA
 - Uses only template-based prompts (e.g., "a photo of a {classname}")
 - Simpler approach with fewer computational requirements
 - Good baseline performance
-- Enable with: `--use-csp False`
+- Enable with: `csp: False` in the corresponding config file.
 
 ### Hyperparameters
 
 The main hyperparameter in ETTA is **alpha**, which controls the adaptive ensembling:
 
-- **alpha = 0.2**: Uses top 20% of most relevant prompts per class
-- **alpha = 0.1**: Uses top 10% of most relevant prompts (more focused)
-- **alpha = 0.5**: Uses top 50% of prompts (more robust but potentially noisy)
+- **alpha: 0.2** in the corresponding config file: Uses top 20% of most relevant prompts per class
+
 
 The alpha parameter determines the trade-off between prompt focus and robustness in the adaptive prompt filtering mechanism.
 
@@ -133,28 +96,27 @@ The alpha parameter determines the trade-off between prompt focus and robustness
 ### Basic Usage
 
 ```bash
-python ETTA.py --datasets caltech101 --backbone ViT-B/16 --alpha 0.2
+python ETTA.py --datasets caltech101 --backbone ViT-B/16 --data-root "./DATA" --tta-approach "ETTA_PLUS" --config "configs"
 ```
 
 ### Command Line Arguments
 
 - `--datasets`: Datasets to process (e.g., "caltech101", "I/A/V/R/S" for ImageNet variants)
-- `--data-root`: Path to datasets directory (default: "D:\TDA\DATA")
+- `--data-root`: Path to datasets directory (default: "./DATA")
 - `--backbone`: CLIP model backbone ("ViT-B/16" or "RN50")
-- `--alpha`: Alpha value for adaptive prompt filtering (default: 0.2)
-- `--use-csp`: Use class-specific prompts instead of general prompts (default: True)
+- `--tta-approach`: Test-time adaptation approach ("ETTA" or "ETTA_PLUS")
+- `--config`: Path to configuration directory containing dataset-specific YAML files (default: "configs")
+
 
 ### Examples
 
 ```bash
-# Run on Caltech101 with ViT-B/16 backbone
-python ETTA.py --datasets caltech101 --backbone ViT-B/16 --alpha 0.2
+# Run on Caltech101 with ViT-B/16 backbone using ETTA_PLUS
+python ETTA.py --datasets caltech101 --backbone ViT-B/16 --data-root "./DATA" --tta-approach "ETTA_PLUS" --config "configs"
 
-# Run on ImageNet variants with RN50 backbone
-python ETTA.py --datasets I/A/V/R/S --backbone RN50 --alpha 0.1
+# Run on ImageNet Adversarial (A) with RN50 backbone using ETTA
+python ETTA.py --datasets AI --backbone RN50 --data-root "./DATA" --tta-approach "ETTA" --config "configs"
 
-# Run on multiple datasets with custom data path
-python ETTA.py --datasets caltech101/dtd --data-root /path/to/data --alpha 0.3
 ```
 
 ### Supported Datasets
@@ -184,13 +146,17 @@ ETTA typically shows significant improvements over baseline CLIP models, especia
 If you find this work useful, please cite:
 
 ```bibtex
-@article{dastmalchi2024etta,
-  title={ETTA: Efficient Test-Time Adaptation for Vision-Language Models via Dynamic Embedding Updates},
-  author={Dastmalchi, Hamidreza and others},
-  journal={arXiv preprint},
-  year={2024}
+@article{dastmalchi2025etta,
+  title={ETTA: Efficient Test-Time Adaptation for Vision-Language Models through Dynamic Embedding Updates},
+  author={Dastmalchi, H. and An, A. and Cheraghian, A.},
+  journal={ArXiv},
+  year={2025},
+  url={https://arxiv.org/abs/2508.05898}
 }
 ```
+
+**Reference:**
+Dastmalchi, H., An, A., & Cheraghian, A. (2025). ETTA: Efficient Test-Time Adaptation for Vision-Language Models through Dynamic Embedding Updates. ArXiv. https://arxiv.org/abs/2508.05898
 
 ## License
 

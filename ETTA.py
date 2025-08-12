@@ -35,7 +35,7 @@ def get_arguments():
     # Dataset configuration
     parser.add_argument('--datasets', dest='datasets', type=str, default="fgvc")
     
-    parser.add_argument('--data-root', dest='data_root', type=str, default='D:\TDA\DATA',
+    parser.add_argument('--data-root', dest='data_root', type=str, default='./DATA',
                        help='Path to the datasets directory.')
     
     # Model configuration
