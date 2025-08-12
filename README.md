@@ -57,7 +57,7 @@ pip install -r requirements.txt
 
 ## Dataset Setup
 
-To set up all required datasets, please refer to the [DATASETS.md](./docs/DATASETS.md) file.  
+To set up all required datasets, please refer to the [DATASETS.md](./Doc/DATASETS.md) file.  
 It includes step-by-step instructions for preparing datasets for both benchmarks used in this project.
 
 
