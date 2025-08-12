@@ -2,6 +2,9 @@
 
 Official implementation of **ETTA: Efficient Test-Time Adaptation for Vision-Language Models via Dynamic Embedding Updates**.
 
+[![Paper](https://img.shields.io/badge/Paper-arXiv%3A2508.05898-B31B1B.svg)](https://arxiv.org/pdf/2508.05898)
+
+## Block Diagram
 ## About
 
 ETTA is a novel test-time adaptation approach that improves CLIP model performance through two key innovations:
