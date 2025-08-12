@@ -86,7 +86,7 @@ ETTA supports two prompt strategies that can be configured:
 
 The main hyperparameter in ETTA is **alpha**, which controls the adaptive ensembling:
 
-- **alpha = 0.2**: Uses top 20% of most relevant prompts per class
+- **alpha: 0.2** in the corresponding config file: Uses top 20% of most relevant prompts per class
 
 
 The alpha parameter determines the trade-off between prompt focus and robustness in the adaptive prompt filtering mechanism.
