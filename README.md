@@ -11,6 +11,11 @@ ETTA is a novel test-time adaptation approach that improves CLIP model performan
 
 The method adapts to test data without requiring retraining, making it efficient and practical for real-world deployment.
 
+
+
+![Block Diagram](assets/diagram_gif.gif)
+
+
 ## Key Features
 
 - **Adaptive Prompt Filtering**: Dynamically selects top-α% most relevant prompts per class based on image-class similarity
