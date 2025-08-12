@@ -57,7 +57,9 @@ pip install -r requirements.txt
 
 ## Dataset Setup
 
-To set up all required datasets, kindly refer to the guidance in `DATASETS.md`, which incorporates steps for two benchmarks.
+To set up all required datasets, please refer to the [DATASETS.md](./docs/DATASETS.md) file.  
+It includes step-by-step instructions for preparing datasets for both benchmarks used in this project.
+
 
 ## Configuration
 
@@ -85,8 +87,7 @@ ETTA supports two prompt strategies that can be configured:
 The main hyperparameter in ETTA is **alpha**, which controls the adaptive ensembling:
 
 - **alpha = 0.2**: Uses top 20% of most relevant prompts per class
-- **alpha = 0.1**: Uses top 10% of most relevant prompts (more focused)
-- **alpha = 0.5**: Uses top 50% of prompts (more robust but potentially noisy)
+
 
 The alpha parameter determines the trade-off between prompt focus and robustness in the adaptive prompt filtering mechanism.
 
